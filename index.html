@@ -1,1 +1,181 @@
-<div class="dp-embed-wrapper"><iframe style="border: medium none currentcolor;" title="Editing Truth Slider simulator" src="https://allisongibbes.github.io/Editing-Truth-Slider/" width="100%" height="500" loading="lazy"></iframe></div>
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Editing Truth Slider</title>
+    <style>
+        body {
+            background-color: #22272e;
+            color: #ffffff;
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 20px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+        h2 {
+            color: #f1e800;
+            margin-bottom: 5px;
+        }
+        p.instructions {
+            color: #adbac7;
+            margin-bottom: 20px;
+            text-align: center;
+            max-width: 600px;
+        }
+        .container {
+            display: flex;
+            flex-direction: column;
+            width: 100%;
+            max-width: 700px;
+            background-color: #2d333b;
+            border: 2px solid #444c56;
+            border-radius: 8px;
+            padding: 20px;
+            gap: 20px;
+        }
+        .screen {
+            background-color: #1c2128;
+            border: 2px solid #f1e800;
+            border-radius: 6px;
+            height: 200px;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            padding: 20px;
+            text-align: center;
+            position: relative;
+        }
+        .speaker-title {
+            color: #f1e800;
+            font-size: 14px;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            margin-bottom: 10px;
+        }
+        .quote-display {
+            font-size: 18px;
+            font-style: italic;
+            line-height: 1.4;
+            max-width: 550px;
+        }
+        .audio-indicator {
+            position: absolute;
+            bottom: 10px;
+            right: 15px;
+            font-size: 12px;
+            color: #adbac7;
+        }
+        .controls-group {
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+            background-color: #22272e;
+            padding: 15px;
+            border-radius: 6px;
+        }
+        label {
+            font-weight: bold;
+            color: #f1e800;
+            font-size: 14px;
+        }
+        input[type="range"] {
+            width: 100%;
+            cursor: pointer;
+            accent-color: #f1e800;
+        }
+        .slider-labels {
+            display: flex;
+            justify-content: space-between;
+            font-size: 12px;
+            color: #adbac7;
+        }
+        .analysis-box {
+            background-color: #373e47;
+            padding: 15px;
+            border-radius: 6px;
+            border-left: 4px solid #f1e800;
+        }
+        .analysis-box h4 {
+            margin: 0 0 5px 0;
+            color: #f1e800;
+        }
+        .analysis-box p {
+            margin: 0;
+            font-size: 14px;
+            line-height: 1.4;
+        }
+    </style>
+</head>
+<body>
+
+    <h2>Editing Truth Slider</h2>
+    <p class="instructions">Adjust the slider to alter the edit points and musical scoring of the same raw interview footage, transforming the subject's perceived reliability.</p>
+
+    <div class="container">
+        <!-- Visual Screen -->
+        <div class="screen">
+            <div class="speaker-title">Subject: Corporate Whistleblower / Executive</div>
+            <div id="quote-display" class="quote-display">"We followed every single safety regulation... until the board forced us to cut corners to save money, and I take full personal responsibility for looking the other way."</div>
+            <div id="audio-indicator" class="audio-indicator">Music: Inspiring &amp; Triumphant</div>
+        </div>
+
+        <!-- Slider Control -->
+        <div class="controls-group">
+            <label for="truth-slider">Editing Bias Level: <span id="slider-val">Sympathetic / Honest</span></label>
+            <input type="range" id="truth-slider" min="0" max="2" value="0" step="1" oninput="updateEditingState()">
+            <div class="slider-labels">
+                <span>01. Sympathetic &amp; Accountable</span>
+                <span>02. Neutral / Balanced</span>
+                <span>03. Untrustworthy &amp; Evasive</span>
+            </div>
+        </div>
+
+        <!-- Dynamic Analysis Box -->
+        <div class="analysis-box">
+            <h4 id="analysis-title">Perception: Sympathetic &amp; Accountable</h4>
+            <p id="analysis-desc">By keeping the full sentence intact and pairing it with soft, reflective strings, the audience views the subject as a remorseful insider who fell victim to corporate pressure and is owning up to mistakes.</p>
+        </div>
+    </div>
+
+    <script>
+        const states = [
+            {
+                quote: "\"We followed every single safety regulation... until the board forced us to cut corners to save money, and I take full personal responsibility for looking the other way.\"",
+                audio: "Music: Soft, reflective strings",
+                title: "Perception: Sympathetic & Accountable",
+                desc: "By keeping the full sentence intact and pairing it with soft, reflective strings, the audience views the subject as a remorseful insider who fell victim to corporate pressure and is owning up to mistakes."
+            },
+            {
+                quote: "\"We followed every single safety regulation... [Jump Cut] ...I take full personal responsibility...\"",
+                audio: "Music: Neutral / Ambient drone",
+                title: "Perception: Ambiguous / Standard Inquiry",
+                desc: "Through selective jump-cutting, the middle admission about cutting corners is edited out. The tone shifts from a full confession to a clipped, rehearsed statement that raises mild suspicion."
+            },
+            {
+                quote: "\"...force us to cut corners to save money... [Hard Cut] ...I take full... responsibility.\"",
+                audio: "Music: Low, ominous thriller synth",
+                title: "Perception: Untrustworthy & Evasive",
+                desc: "By isolating fragments out of context and adding a tense, dramatic music cue, the edit weaponizes the footage. The subject now appears defensive, evasive, and heavily implicated in corporate wrongdoing."
+            }
+        ];
+
+        function updateEditingState() {
+            const val = document.getElementById('truth-slider').value;
+            const currentState = states[val];
+
+            document.getElementById('quote-display').innerText = currentState.quote;
+            document.getElementById('audio-indicator').innerText = currentState.audio;
+            document.getElementById('analysis-title').innerText = currentState.title;
+            document.getElementById('analysis-desc').innerText = currentState.desc;
+
+            // Update label text based on index
+            const labels = ['Sympathetic / Honest', 'Neutral / Balanced', 'Untrustworthy / Evasive'];
+            document.getElementById('slider-val').innerText = labels[val];
+        }
+    </script>
+</body>
+</html>
